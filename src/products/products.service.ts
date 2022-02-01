@@ -9,11 +9,11 @@ export class ProductsService {
   }
 
   findAll() {
-    return `This action returns all products`;
+    return [];
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} product`;
+    return {id: id};
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
