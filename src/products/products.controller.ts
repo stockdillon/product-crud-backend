@@ -35,13 +35,13 @@ export class ProductsController {
     return this.productsService.findOne(name);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productsService.update(+id, updateProductDto);
+  @Patch(':name')
+  update(@Param('name') name: string, @Body() updateProductDto: Partial<UpdateProductDto>) {
+    return this.productsService.update(name, updateProductDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productsService.remove(+id);
+  @Delete(':name')
+  remove(@Param('name') name: string) {
+    return this.productsService.remove(name);
   }
 }

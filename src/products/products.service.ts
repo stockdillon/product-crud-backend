@@ -30,11 +30,16 @@ export class ProductsService {
     return { product };
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  update(name: string, updateProductDto: UpdateProductDto) {
+    const original = this.products.find(p => p.name === name);
+    original.name = updateProductDto?.name ?? original.name;
+    original.description = updateProductDto?.description ?? original.description;
+    original.price = updateProductDto?.price ?? original.price;
+    return { product: original };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  remove(name: string) {
+    this.products = this.products.filter(p => !(p.name === name))
+    return { message: `This action removes a #${name} product`};
   }
 }
