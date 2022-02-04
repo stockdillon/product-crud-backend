@@ -22,6 +22,7 @@ export class ProductsController {
       }
     }
     res.status(status);
+    res.json({status});
     res.send();
   }
 
