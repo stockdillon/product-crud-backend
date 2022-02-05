@@ -1,4 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpException, HttpStatus, ConflictException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Res,
+  HttpStatus,
+  ConflictException,
+  InternalServerErrorException,
+  ValidationPipe,
+  UsePipes,
+  BadRequestException,
+} from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -11,7 +26,11 @@ export class ProductsController {
   @Post()
   create(@Body() createProductDto: CreateProductDto, @Res() res: Response) {
     // let status: number = Status.Success;
-    if(this.productsService.products.find(p => p.name === createProductDto.name)) {
+    if (
+      this.productsService.products.find(
+        (p) => p.name === createProductDto.name,
+      )
+    ) {
       // status = Status.BadRequest;
       throw new ConflictException();
     } else {
@@ -21,7 +40,7 @@ export class ProductsController {
         throw new InternalServerErrorException();
       }
     }
-    res.json({statusCode: HttpStatus.OK, message: 'success'});
+    res.json({ statusCode: HttpStatus.OK, message: 'success' });
     res.send();
   }
 
@@ -36,7 +55,16 @@ export class ProductsController {
   }
 
   @Patch(':name')
-  update(@Param('name') name: string, @Body() updateProductDto: Partial<UpdateProductDto>) {
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  update(
+    @Param('name') name: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
+    if (!updateProductDto.description && !updateProductDto.price) {
+      throw new BadRequestException(
+        'One or more fields (description, price) must be defined',
+      );
+    }
     return this.productsService.update(name, updateProductDto);
   }
 

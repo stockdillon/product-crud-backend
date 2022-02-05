@@ -14,7 +14,7 @@ export class ProductsService {
     {
       name: 'monitor-arm',
       description: 'ergonomic VESA display mount',
-      price: 800
+      price: 800,
     },
   ];
   create(createProductDto: CreateProductDto) {
@@ -26,20 +26,21 @@ export class ProductsService {
   }
 
   findOne(name: string) {
-    const product = this.products.find(prod => prod.name === name) ?? null;
+    const product = this.products.find((prod) => prod.name === name) ?? null;
     return { product };
   }
 
   update(name: string, updateProductDto: UpdateProductDto) {
-    const original = this.products.find(p => p.name === name);
+    const original = this.products.find((p) => p.name === name);
     original.name = updateProductDto?.name ?? original.name;
-    original.description = updateProductDto?.description ?? original.description;
+    original.description =
+      updateProductDto?.description ?? original.description;
     original.price = updateProductDto?.price ?? original.price;
     return { product: original };
   }
 
   remove(name: string) {
-    this.products = this.products.filter(p => !(p.name === name))
-    return { message: `This action removes a #${name} product`};
+    this.products = this.products.filter((p) => !(p.name === name));
+    return { message: `This action removes a #${name} product` };
   }
 }
