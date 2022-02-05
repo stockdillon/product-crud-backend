@@ -1,9 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpException, HttpStatus, ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Response } from 'express';
-import { Status } from 'src/status/status.enum';
 
 @Controller('products')
 export class ProductsController {
@@ -11,18 +10,18 @@ export class ProductsController {
 
   @Post()
   create(@Body() createProductDto: CreateProductDto, @Res() res: Response) {
-    let status: number = Status.Success;
-    if(createProductDto.id === 999) {
-      status = Status.BadRequest;
+    // let status: number = Status.Success;
+    if(this.productsService.products.find(p => p.name === createProductDto.name)) {
+      // status = Status.BadRequest;
+      throw new ConflictException();
     } else {
       try {
         this.productsService.create(createProductDto);
       } catch {
-        status = Status.ServerError;
+        throw new InternalServerErrorException();
       }
     }
-    res.status(status);
-    res.json({status});
+    res.json({statusCode: HttpStatus.OK, message: 'success'});
     res.send();
   }
 
