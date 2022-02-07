@@ -13,6 +13,7 @@ import {
   ValidationPipe,
   UsePipes,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -25,13 +26,11 @@ export class ProductsController {
 
   @Post()
   create(@Body() createProductDto: CreateProductDto, @Res() res: Response) {
-    // let status: number = Status.Success;
     if (
       this.productsService.products.find(
         (p) => p.name === createProductDto.name,
       )
     ) {
-      // status = Status.BadRequest;
       throw new ConflictException();
     } else {
       try {
@@ -46,12 +45,16 @@ export class ProductsController {
 
   @Get()
   findAll() {
-    return this.productsService.findAll();
+    return this.productsService.findAll() ?? [];
   }
 
   @Get(':name')
   findOne(@Param('name') name: string) {
-    return this.productsService.findOne(name);
+    const product = this.productsService.findOne(name);
+    if (!product) {
+      throw new NotFoundException();
+    }
+    return product;
   }
 
   @Patch(':name')
